@@ -11,6 +11,9 @@ class Product(models.Model):
     display_resolution = models.CharField(max_length=100, blank=True, null=True, verbose_name="Роздільна здатність екрану")
     photos = models.JSONField(default=list, blank=True, verbose_name="Фотографії")
     characteristics = models.JSONField(default=dict, blank=True, verbose_name="Характеристики")
+
+    url = models.URLField(verbose_name='Посилання на товар', unique=True)
+
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата створення")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата оновлення")
 
