@@ -41,6 +41,9 @@ class SeleniumDriver:
 
         return options
 
+    def stop(self):
+        self.driver.stop_client()
+
 
 class Browser:
     SEARCH_CLASSES: ClassVar = ["header-bottom", "header-top-in"]
@@ -115,9 +118,6 @@ class Browser:
             return False
         self.open_url(item_url)
         return True
-
-    def stop(self):
-        self.driver.stop_client()
 
 
 class ItemParser(Parser):
@@ -203,7 +203,7 @@ def get_first_element_info():
     data = ProductService.build_create_data(parser.get_data(), browser.url)
     print(data)
     ProductService.save(data)
-    browser.stop()
+    driver.stop()
 
 
 if __name__ == "__main__":
