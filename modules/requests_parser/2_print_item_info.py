@@ -1,6 +1,10 @@
+"""
+Виводить інформацію про продукт за його посиланням. 
+"""
+
 from modules.load_django import *  # noqa: I001
 from parser_app.services.product import ProductService  # type: ignore
-from parser_app.types import ProductCreateData
+from parser_app.types import ProductCreateData # type: ignore
 
 from .constants import URL
 

@@ -8,6 +8,7 @@ import requests
 from bs4 import BeautifulSoup, Tag
 
 from modules.load_django import *
+from modules.parser import Parser
 from parser_app.services.product import ProductService  # type: ignore
 from .constants import URL
 
@@ -25,13 +26,20 @@ class ItemFetcher:
         return self.response.text
 
 
-class ItemScraper:
+# python -m modules.requests_parser.1_get_item_info
+
+
+class ItemParser(Parser):
+    TITLE = ".main-title"
+    REVIEWS = ".reviews-count span"
+    PRODUCT_CODE = "#product_code"
+
     def __init__(self, html: str):
         self._html = html
         self.soup = BeautifulSoup(html, "html.parser")
 
     @staticmethod
-    def _get_text(tag: SelectResult) -> str:
+    def _get_text(tag: SelectResult) -> str | None:
         if not tag:
             return
         return tag.get_text(strip=True)
@@ -52,7 +60,7 @@ class ItemScraper:
         if not char_span:
             return
         char = char_span.find_next_sibling()
-        return char
+        return self._get_text(char)
 
     def _get_photos(self) -> list[str]:
         photos_div = self.soup.select_one(".product-block-bottom")
@@ -73,31 +81,26 @@ class ItemScraper:
             )
         return characteristics
 
-    def get_data(self) -> dict:
-        tags = {
-            "title": self.soup.select_one(".main-title"),
-            "color": self._get_characteristic_element("Колір"),
-            "storage": self._get_characteristic_element("Вбудована пам'ять"),
-            "product_code": self.soup.select_one("#product_code"),
-            "reviews": self.soup.select_one(".reviews-count span"),
-            "screen_diagonal": self._get_characteristic_element("Діагональ екрану"),
-            "display_resolution": self._get_characteristic_element(
-                "Роздільна здатність екрану"
-            ),
-        }
-        product_info = {}
-        for key, value in tags.items():
-            product_info[key] = self._get_text(value)
-        additional_info = {
-            "photos": self._get_photos(),
-            "characteristics": self._get_characteristics(),
-        }
-        product_info.update(additional_info)
-        return product_info
+    def get_element_text(self, selector: str) -> str | None:
+        return self._get_text(self.soup.select_one(selector))
+
+    def _get_prices(self):
+        prices = {}
+        current_price = self.get_element_text(".br-pr-np span")
+        if not current_price:
+            return prices
+        def_price = self.get_element_text(".br-pr-op span")
+        if not def_price:
+            prices["price"] = current_price.replace(" ", "").replace(",", ".")
+        else:
+            prices["price"] = def_price.replace(" ", "").replace(",", ".")
+            prices["sale_price"] = current_price.replace(" ", "").replace(",", ".")
+        return prices
 
 
 if __name__ == "__main__":
     fetcher = ItemFetcher(URL)
-    item_scraper = ItemScraper(fetcher.fetch_html())
+    item_scraper = ItemParser(fetcher.fetch_html())
     data = ProductService.build_create_data(data=item_scraper.get_data(), url=URL)
+    print(data)
     ProductService.save(data)
