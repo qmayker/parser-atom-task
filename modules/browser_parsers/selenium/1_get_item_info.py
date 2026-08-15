@@ -22,7 +22,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from modules.browser_parsers import constants
 from modules.load_django import *
 from modules.parser import Parser
-from parser_app.services.product import ProductService # type: ignore
+from parser_app.services.product import ProductService  # type: ignore
 
 # python -m modules.browser_parsers.selenium.1_get_item_info
 
@@ -116,6 +116,9 @@ class Browser:
         self.open_url(item_url)
         return True
 
+    def stop(self):
+        self.driver.stop_client()
+
 
 class ItemParser(Parser):
     TITLE = "//h1[@class='desktop-only-title']"
@@ -200,6 +203,7 @@ def get_first_element_info():
     data = ProductService.build_create_data(parser.get_data(), browser.url)
     print(data)
     ProductService.save(data)
+    browser.stop()
 
 
 if __name__ == "__main__":
