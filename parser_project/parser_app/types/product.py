@@ -3,8 +3,8 @@ from dataclasses import dataclass, field, fields
 
 @dataclass
 class ProductCreateData:
-    title: str
     url: str
+    title: str
     color: str | None = None
     storage: str | None = None
     product_code: str | None = None
@@ -13,6 +13,8 @@ class ProductCreateData:
     display_resolution: str | None = None
     photos: list[str] = field(default_factory=list)
     characteristics: dict = field(default_factory=dict)
+    price: float | None = None
+    sale_price: float | None = None
 
     @classmethod
     def from_model(cls, product):

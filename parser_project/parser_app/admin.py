@@ -11,6 +11,8 @@ class ProductAdmin(admin.ModelAdmin):
         "title",
         "color",
         "storage",
+        "price",
+        "sale_price",
         "product_code",
         "reviews",
         "created_at",
@@ -23,6 +25,10 @@ class ProductAdmin(admin.ModelAdmin):
         (
             "Характеристики",
             {"fields": ("color", "storage", "screen_diagonal", "display_resolution")},
+        ),
+        (
+            "Ціни",
+            {"fields": ("price", "sale_price")},
         ),
         ("Медіа", {"fields": ("photos",)}),
         (
