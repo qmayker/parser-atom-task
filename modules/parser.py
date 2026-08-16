@@ -4,13 +4,13 @@ from abc import ABC, abstractmethod
 class Parser(ABC):
     TITLE: str = None
     PRODUCT_CODE: str = None
-    REVIEWS : str = None
+    REVIEWS: str = None
 
     @abstractmethod
-    def get_element_text(self) -> str: ...
+    def get_element_text(self, xpath: str) -> str | None: ...
 
     @abstractmethod
-    def _get_characteristic_element(self) -> str: ...
+    def _get_characteristic_element(self, name: str) -> str: ...
 
     @abstractmethod
     def _get_photos(self) -> list[str]: ...
@@ -30,9 +30,7 @@ class Parser(ABC):
             "storage": self._get_characteristic_element("Вбудована пам'ять"),
             "photos": self._get_photos(),
             "product_code": self.get_element_text(self.PRODUCT_CODE),
-            "reviews": self.get_element_text(
-                self.REVIEWS
-            ),
+            "reviews": self.get_element_text(self.REVIEWS),
             "screen_diagonal": self._get_characteristic_element("Діагональ екрану"),
             "display_resolution": self._get_characteristic_element(
                 "Роздільна здатність екрану"
