@@ -4,11 +4,16 @@ Visits URL, searches for a product, opens the first result, and extracts all pro
 Uses Playwright for headless/headed browser automation with better performance and stability.
 """
 
-import re
+import re  # noqa: I001
+import threading
 
 from playwright.sync_api import Browser, Locator, TimeoutError, sync_playwright
 
 from modules.browser_parsers import constants, services
+from modules.load_django import *
+
+from parser_app.services.product import ProductService  # type: ignore
+from parser_app.choices import Parsers  # type: ignore
 
 
 class PlaywrightService:
@@ -145,22 +150,7 @@ class ItemParser(services.ItemParser[PageService]):
         return characteristics
 
 
-def get_first_element_info(
-    page: PageService,
-    search_service: SearchService,
-    items_service: ItemsService,
-    item_parser: ItemParser,
-):
-    page.open_url(constants.URL)
-    if not search_service.search(constants.SEARCH_TEXT):
-        return None
-    listing = items_service.get_listing()
-    if not listing:
-        return None
-    if not items_service.open_item(listing[0]):
-        return None
 
-    return item_parser.get_data()
 
 
 if __name__ == "__main__":
@@ -173,4 +163,14 @@ if __name__ == "__main__":
         page, search_service, items_service, item_parser
     )
     print(data)
+    if data:
+        # Run database operation in a separate thread to avoid async context issues
+        def save_product():
+            ProductService.save(
+                ProductService.build_create_data(data, page.url, Parsers.PLAYWRIGHT)
+            )
+        
+        thread = threading.Thread(target=save_product)
+        thread.start()
+        thread.join()
     playwright.end()
