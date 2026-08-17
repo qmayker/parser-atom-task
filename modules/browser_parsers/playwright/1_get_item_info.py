@@ -1,3 +1,9 @@
+"""
+Playwright-based product parser.
+Visits URL, searches for a product, opens the first result, and extracts all product information.
+Uses Playwright for headless/headed browser automation with better performance and stability.
+"""
+
 import re
 
 from playwright.sync_api import Browser, Locator, TimeoutError, sync_playwright
@@ -98,7 +104,7 @@ class ItemParser(services.ItemParser[PageService]):
 
     def _get_characteristic_element(self, name):
         characteristic: Locator = self._get_characteristic(name)
-        char_value = characteristic.locator('xpath=..//a')
+        char_value = characteristic.locator("xpath=..//a")
         return char_value.text_content(timeout=10000).strip()
 
     def _get_photos(self):
@@ -153,7 +159,7 @@ def get_first_element_info(
         return None
     if not items_service.open_item(listing[0]):
         return None
-    
+
     return item_parser.get_data()
 
 
@@ -163,6 +169,8 @@ if __name__ == "__main__":
     search_service = SearchService(page)
     items_service = ItemsService(page)
     item_parser = ItemParser(page)
-    data = services.get_first_element_info(page, search_service, items_service, item_parser)
+    data = services.get_first_element_info(
+        page, search_service, items_service, item_parser
+    )
     print(data)
     playwright.end()

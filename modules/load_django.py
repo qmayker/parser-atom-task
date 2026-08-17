@@ -1,3 +1,9 @@
+"""
+Django initialization module.
+Sets up Django environment for modules that need database access.
+Must be imported before using Django models.
+"""
+
 import os
 import sys
 

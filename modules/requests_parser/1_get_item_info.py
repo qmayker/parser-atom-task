@@ -1,5 +1,7 @@
 """
-Збирає інформацію про товар, та зберігає до бд
+Requests-based product parser.
+Fetches product page using HTTP requests and extracts product information using BeautifulSoup.
+Saves extracted data to Django database. Lightweight alternative to browser automation.
 """
 
 import re  # noqa: I001

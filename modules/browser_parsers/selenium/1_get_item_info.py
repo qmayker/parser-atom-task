@@ -1,5 +1,7 @@
 """
-Visits url, opens first item found and returns info about it
+Selenium-based product parser.
+Visits URL, searches for a product, opens the first result, and extracts all product information.
+Saves extracted data to Django database. Uses Selenium WebDriver for browser automation.
 """
 
 from modules.load_django import *  # noqa: I001

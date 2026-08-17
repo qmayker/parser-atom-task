@@ -1,3 +1,8 @@
+"""
+Constants for browser parsers.
+Contains XPath expressions, search URLs, and other configuration for parsing product pages.
+"""
+
 URL = "https://brain.com.ua/"
 SEARCH_TEXT = "Apple iPhone 15 128GB Black"
 SEARCH_CLASSES = ["header-bottom", "header-top-in"]

@@ -1,3 +1,9 @@
+"""
+Abstract base parser class.
+Defines the interface for parsing product information (title, price, photos, characteristics, etc.)
+from product pages regardless of the browser automation tool used.
+"""
+
 from abc import ABC, abstractmethod
 
 

@@ -1,3 +1,8 @@
+"""
+Base service classes for browser automation.
+Provides abstract base classes for page interaction, search, item listing, and item parsing.
+"""
+
 import random
 import time
 from abc import ABC, abstractmethod
