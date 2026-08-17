@@ -111,7 +111,7 @@ if __name__ == "__main__":
     print(data)
     if data:
         ProductService.save(
-            data=ProductService.build_create_data(
+            ProductService.build_create_data(
                 data, url=URL, parser=Parsers.REQUESTS
             )
         )
