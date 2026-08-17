@@ -1,10 +1,18 @@
+"""
+Data types for product information.
+Defines ProductCreateData dataclass for structured product data validation and transfer.
+"""
+
 from dataclasses import dataclass, field, fields
+
+from parser_app.choices import Parsers
 
 
 @dataclass
 class ProductCreateData:
     url: str
     title: str
+    parser: Parsers
     color: str | None = None
     storage: str | None = None
     product_code: str | None = None

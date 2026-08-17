@@ -17,7 +17,7 @@ class ProductAdmin(admin.ModelAdmin):
         "reviews",
         "created_at",
     )
-    list_filter = ("created_at", "updated_at", "color", "storage")
+    list_filter = ("created_at", "updated_at", "color", "storage", "parser")
     search_fields = ("title", "product_code")
     readonly_fields = ("created_at", "updated_at")
     fieldsets = (
@@ -33,6 +33,14 @@ class ProductAdmin(admin.ModelAdmin):
         ("Медіа", {"fields": ("photos",)}),
         (
             "Додатково",
-            {"fields": ("reviews", "characteristics", "created_at", "updated_at")},
+            {
+                "fields": (
+                    "reviews",
+                    "characteristics",
+                    "created_at",
+                    "updated_at",
+                    "parser",
+                )
+            },
         ),
     )
