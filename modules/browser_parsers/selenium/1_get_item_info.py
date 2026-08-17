@@ -7,8 +7,11 @@ Saves extracted data to Django database. Uses Selenium WebDriver for browser aut
 from modules.load_django import *  # noqa: I001
 
 import re
+import threading
 
 from parser_app.services.product import ProductService  # type: ignore
+from parser_app.choices import Parsers  # type: ignore
+
 from selenium import webdriver
 from selenium.common.exceptions import (
     ElementNotInteractableException,
@@ -37,11 +40,19 @@ class SeleniumService:
         options.add_argument("--disable-notifications")
         options.add_argument("--disable-popup-blocking")
         options.add_argument("--lang=uk-UA")
+        options.add_argument("--headless=new")
 
         return options
 
     def stop(self):
         self.driver.stop_client()
+
+    def quit_driver(self):
+        self.driver.quit()
+
+    def end(self):
+        self.stop()
+        self.quit_driver()
 
 
 class PageService(services.PageService):
@@ -172,7 +183,15 @@ if __name__ == "__main__":
     )
     print(data)
     if data:
-        data = ProductService.build_create_data(data, page.url)
-        ProductService.save(data)
+        # Run database operation in a separate thread to avoid async context issues
+        def save_product():
+            product_data = ProductService.build_create_data(
+                data, page.url, Parsers.SELENIUM
+            )
+            ProductService.save(product_data)
 
-    service.stop()
+        thread = threading.Thread(target=save_product)
+        thread.start()
+        thread.join()
+
+    service.end()
