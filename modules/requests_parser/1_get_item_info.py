@@ -11,7 +11,10 @@ from bs4 import BeautifulSoup, Tag
 
 from modules.load_django import *
 from modules.parser import Parser
+
 from parser_app.services.product import ProductService  # type: ignore
+from parser_app.choices import Parsers
+
 from .constants import URL
 
 
@@ -103,6 +106,12 @@ class ItemParser(Parser):
 if __name__ == "__main__":
     fetcher = ItemFetcher(URL)
     item_scraper = ItemParser(fetcher.fetch_html())
-    data = ProductService.build_create_data(data=item_scraper.get_data(), url=URL)
+    data = item_scraper.get_data()
+
     print(data)
-    ProductService.save(data)
+    if data:
+        ProductService.save(
+            data=ProductService.build_create_data(
+                data, url=URL, parser=Parsers.REQUESTS
+            )
+        )
